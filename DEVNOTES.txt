@@ -1,0 +1,90 @@
+Random thoughts:
+
+Levels need:
+* Background tile layer
+* Foreground tile layer
+
+If all tiles are a fixed size (8x8? 16x16?) then we can build them into
+one giant texture... I think Q2 had a system like that for small textures.
+
+OpenGameArt has some sprites that would be useful:
+   http://opengameart.org/content/oga-16x16-jrpg-sprites-tiles
+   ... things like:
+   http://opengameart.org/content/16x18-zombie-characters-templates-extra-template
+
+Goals?
+* Should be similar to nethack: go through ~60 levels, get some artefact,
+  come back, offer it.
+* This will be online and multiplayer... what happens when someone hits the
+  victory condition?
+** Maybe we can just reboot the world?
+* Perhaps we should reboot the world periodically to encourage players to
+  not camp?
+
+Implicit party system-- if you're near someone, then certain enchantments
+and such will apply to other players. Kinda like Toejam and Earl. XP gets
+shared too.
+
+Levelling up... how will that work. Like Diablo, maybe? Or maybe like
+nethack where STR/DEX/INT/WIS/CHA are determined by the same?
+
+
+
+Player Inventories
+* Slot limits?
+* Encumberance? I like this more.
+
+Equipment
+* Counts toward encumberance
+* Slot system: Shirt, Suit, Cloak, Left Hand, Right Hand, Pants, Helmet, Boots
+* Items can be B/C/U just like nethack
+* Accessories? Maybe just three slots?
+
+Most monsters should use the same 'skeleton' as players
+* Monsters should be able to wear armor, wield weapons
+
+
+What nethack items would make sense?
+* Most armor are probably okay.
+* Lots of weapons are probably fine too.
+* Artefacts?
+* Magic stuff?
+** oilskin cloak? don't think water will blank scrolls but prevents grab attacks?
+** cloak of invisibility? seems plausable, could do 'invisibility' like TCoMI
+** cloak of magic resistance?
+** cloak of displacement? on being hit randomly 'shimmer'?
+** helm of brilliance?
+** helm of opposite alignment? would need to have alignments.
+** helm of telepathy? could be used to highlight monsters in the dark
+** jumping boots? maybe they increase jump distance?
+** water walking boots seem less useful.
+** scrolls?
+*** identify? not sure if we'll have object identification
+*** enchant weapon/armor? obvious
+*** remove curse? obvious
+*** destroy monster? obvious
+*** confuse monster? could be done
+*** fire? sure
+*** food/gold detection? Probably less useful... could be used to highlight
+    treasures though
+*** magic mapping seems less useful
+*** scare monster seems doable; makes all monsters flee you
+*** teleportation seems doable
+*** amnesia only works if there's object identification
+*** create monster is doable
+*** earth seems less useful
+*** taming requires pets
+*** charging seems like it may or may not be useful
+*** genocide is overkill
+*** not sure how punishment would work
+*** stinking cloud could work
+** what about potions?
+*** healing/extra healing/full healing are obvious
+*** gain energy is also obvious
+*** see invisible makes sense
+*** not sure how hallucination would work but seems plausable
+*** sleeping probably wouldn't work
+*** levitation could work
+*** polymorph? not sure...
+*** gain ability/gain level are easy
+*** there are plenty to borrow from Terraria too...
