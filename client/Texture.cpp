@@ -7,14 +7,13 @@
 namespace squidge {
 namespace client {
 
-Texture::Texture(const std::string& filename) :
+Texture::Texture(const boost::filesystem::path& filename) :
    _textureID(0),
    _width(0),
-   _height(0),
-   _surface(NULL)
+   _height(0)
 {
-   _surface = IMG_Load(filename.c_str());
-   if (!_surface)
+   SDL_Surface *surface = IMG_Load(filename.string().c_str());
+   if (!surface)
    {
       printf("faaaaaail\n");
       // throw?
@@ -37,25 +36,26 @@ Texture::Texture(const std::string& filename) :
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
    {
-      SDL::SurfaceAutoLock autoLock(_surface);
+      SDL::SurfaceAutoLock autoLock(surface);
       glTexImage2D(
          GL_TEXTURE_2D,
          0, // level-of-detail number
          GL_RGBA, // internal format
-         _surface->w,
-         _surface->h,
+         surface->w,
+         surface->h,
          0, // border width
          GL_BGRA, // pixel data format
          GL_UNSIGNED_BYTE,
-         _surface->pixels);
-      _width = _surface->w;
-      _height = _surface->h;
+         surface->pixels);
+      _width = surface->w;
+      _height = surface->h;
    }
 
    _textureID = newTexture;
 
    // I think it may actually be safe to get rid of the SDL_Surface
    // at this point...
+   SDL_FreeSurface(surface);
 }
 
 Texture::~Texture()
@@ -63,8 +63,6 @@ Texture::~Texture()
    if (_textureID > 0)
    {
       glDeleteTextures(1, &_textureID);
-      SDL_FreeSurface(_surface);
-      _surface = NULL;
       _textureID = 0;
       _width = 0;
       _height = 0;

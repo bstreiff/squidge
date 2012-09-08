@@ -10,6 +10,7 @@
 #include "client/Texture.h"
 #include "client/Level.h"
 #include "client/LevelGenerator.h"
+#include "common/platformUtilities.h"
 
 namespace squidge {
 namespace client {
