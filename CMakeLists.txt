@@ -45,7 +45,7 @@ set( Boost_USE_STATIC_LIBS ON )
 set( Boost_USE_MULTITHREADED ON )
 set( BOOST_USE_STATIC_RUNTIME OFF )
 
-find_package( Boost 1.47 REQUIRED chrono system thread date_time random )
+find_package( Boost 1.47 REQUIRED chrono system thread date_time random filesystem )
 
 if( Boost_FOUND )
    message( STATUS "Found Boost" )
