@@ -1,4 +1,5 @@
 #include "client/Level.h"
+#include "client/ResourceManager.h"
 #include <boost/random/random_device.hpp>
 
 namespace squidge {
@@ -12,8 +13,8 @@ Level::Level() :
 {
    // TODO: There should be some texture manager that gives us shared pointers to texture objects.
    // TODO: this should also not load stuff out of an absolute path!
-   _brickTexture = boost::shared_ptr<Texture>(new Texture("/Users/brandon/Desktop/squidge/resources/bricks.png"));
-   _dirtTexture = boost::shared_ptr<Texture>(new Texture("/Users/brandon/Desktop/squidge/resources/dirt.png"));
+   _brickTexture = ResourceManager::get().getTexture("bricks.png");
+   _dirtTexture = ResourceManager::get().getTexture("dirt.png");
 }
 
 Level::~Level()

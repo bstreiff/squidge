@@ -2,9 +2,8 @@
 
 #include <boost/utility.hpp>
 #include <boost/shared_ptr.hpp>
-#include <SDL.h>
+#include <boost/filesystem.hpp>
 #include <SDL_opengl.h>
-#include <string>
 
 namespace squidge {
 namespace client {
@@ -12,7 +11,7 @@ namespace client {
 class Texture : boost::noncopyable
 {
 public:
-   Texture(const std::string& filename);
+   Texture(const boost::filesystem::path& filename);
    ~Texture();
 
    inline GLuint getTextureID() const
@@ -34,7 +33,6 @@ private:
    GLuint _textureID;
    size_t _width;
    size_t _height;
-   SDL_Surface* _surface;
 };
 
 } // namespace client

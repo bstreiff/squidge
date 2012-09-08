@@ -2,14 +2,16 @@
 # List all the source files for SQUIDGE
 #=================================
 set( SQUIDGE_SOURCE_FILES
-    "${SQUIDGE_SOURCE_DIR}/client/main.cpp"
-    "${SQUIDGE_SOURCE_DIR}/client/SDL/Initializer.cpp"
-    "${SQUIDGE_SOURCE_DIR}/client/SDL/Window.cpp"
-    "${SQUIDGE_SOURCE_DIR}/client/Stopwatch.cpp"
-    "${SQUIDGE_SOURCE_DIR}/client/Texture.cpp"
-    "${SQUIDGE_SOURCE_DIR}/client/SpriteBatch.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/Level.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/LevelGenerator.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/ResourceManager.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/SDL/Initializer.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/SDL/Window.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/SpriteBatch.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/Stopwatch.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/Texture.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/main.cpp"
+    "${SQUIDGE_SOURCE_DIR}/common/platformUtilities.cpp"
    )
 
 set( SQUIDGE_OSX_SOURCE_FILES
@@ -25,9 +27,14 @@ set( SQUIDGE_OSX_HEADER_FILES
    )
 
 set( SQUIDGE_WIN32_HEADER_FILES
-    )
+   )
 
 set( SQUIDGE_PUBLIC_HEADER_FILES
+   )
+
+set( SQUIDGE_RESOURCES
+    "${SQUIDGE_SOURCE_DIR}/resources/bricks.png"
+    "${SQUIDGE_SOURCE_DIR}/resources/dirt.png"
    )
 
 #=================================
@@ -74,6 +81,10 @@ if( WIN32 )
    # Minimum supported version is Windows XP RTM.
    # http://msdn.microsoft.com/en-us/library/aa383745%28v=vs.85%29.aspx
    add_definitions( -D_WIN32_WINNT=0x0501 )
+
+   set( SQUIDGE_EXPORT_RESOURCES_DIR
+      ${SQUIDGE_BINARY_DIR}/bin/Resources
+      )
 endif()
 
 #=================================
@@ -85,6 +96,9 @@ if( APPLE )
       ${SQUIDGE_OSX_SOURCE_FILES}
       ${SQUIDGE_OSX_HEADER_FILES} )
    list( APPEND SQUIDGE_LINK_LIBRARIES ${COCOA_FRAMEWORK} )
+   set( SQUIDGE_EXPORT_RESOURCES_DIR
+      ${SQUIDGE_BINARY_DIR}/bin/Squidge.app/Contents/Resources
+      )
 endif()
 
 #=================================
@@ -105,6 +119,12 @@ add_executable(
 target_link_libraries(
    Squidge
    ${SQUIDGE_LINK_LIBRARIES} )
+
+add_custom_target(
+   SquidgeResources ALL
+   COMMAND ${CMAKE_COMMAND} -E copy_directory ${SQUIDGE_SOURCE_DIR}/resources ${SQUIDGE_EXPORT_RESOURCES_DIR}
+   SOURCES ${SQUIDGE_RESOURCES}
+   )
 
 #=================================
 # Export build settings needed by samples
