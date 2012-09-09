@@ -63,7 +63,9 @@ void LevelGenerator::generate(
 
    // Add a box made out of bricks!
    uint32_t boxWidth     = rng()%(width/2);
+   if (boxWidth < 3) boxWidth = 3;
    uint32_t boxHeight    = rng()%(height/2);
+   if (boxHeight < 3) boxHeight = 3;
    uint32_t boxPositionX = rng()%(width/2);
    uint32_t boxPositionY = rng()%(height/2);
 
