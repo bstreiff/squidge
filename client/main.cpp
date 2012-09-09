@@ -23,8 +23,16 @@ int main(int argc, char* argv[])
 
    Level level;
    LevelGenerator levelGenerator;
-   // TODO: temporary level size matches the window size. :)
-   levelGenerator.generate(40, 30, level);
+   // TODO: temporary level size
+   levelGenerator.generate(80, 60, level);
+
+   // Camera position.
+   Vector2f camera(0.0f, 0.0f);
+
+   bool upHeld = false;
+   bool downHeld = false;
+   bool leftHeld = false;
+   bool rightHeld = false;
 
    glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
 
@@ -41,8 +49,44 @@ int main(int argc, char* argv[])
          switch(event.type)
          {
             case SDL_QUIT:
-            case SDL_KEYDOWN:
                return 1;
+            case SDL_KEYDOWN:
+               switch(event.key.keysym.sym)
+               {
+                  case SDLK_UP:
+                     upHeld = true;
+                     break;
+                  case SDLK_DOWN:
+                     downHeld = true;
+                     break;
+                  case SDLK_LEFT:
+                     leftHeld = true;
+                     break;
+                  case SDLK_RIGHT:
+                     rightHeld = true;
+                     break;
+                  default:
+                     break;
+               }
+               break;
+            case SDL_KEYUP:
+               switch(event.key.keysym.sym)
+               {
+                  case SDLK_UP:
+                     upHeld = false;
+                     break;
+                  case SDLK_DOWN:
+                     downHeld = false;
+                     break;
+                  case SDLK_LEFT:
+                     leftHeld = false;
+                     break;
+                  case SDLK_RIGHT:
+                     rightHeld = false;
+                     break;
+                  default:
+                     break;
+               }
             default:
                break;
          }
@@ -52,9 +96,23 @@ int main(int argc, char* argv[])
       if (delta > 0)
       {
          // TODO: update NPCs, physics, world, etc.
+
+         // update the camera
+         if (upHeld)
+            camera.y -= delta * 500;
+         if (downHeld)
+            camera.y += delta * 500;
+         if (leftHeld)
+            camera.x -= delta * 500;
+         if (rightHeld)
+            camera.x += delta * 500;
       }
 
       // draw
+      glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity();
+      glTranslatef(-camera.x, -camera.y, 0.0f);
+
       SpriteBatch sb;
       sb.drawBegin();
 
