@@ -11,8 +11,6 @@ Level::Level() :
    _foreground(),
    _background()
 {
-   // TODO: There should be some texture manager that gives us shared pointers to texture objects.
-   // TODO: this should also not load stuff out of an absolute path!
    _brickTexture = ResourceManager::get().getTexture("bricks.png");
    _dirtTexture = ResourceManager::get().getTexture("dirt.png");
 }
@@ -104,35 +102,63 @@ uint32_t Level::computeFrame(uint32_t x, uint32_t y)
 
 uint32_t Level::computeDirtFrame(uint32_t x, uint32_t y)
 {
-   Tile::Type utype, dtype, ltype, rtype;
-   const Tile& thisTile = tileAt(x, y);
+   const Tile::Type thisType = tileAt(x, y).type;
 
    // Get the tiles that are u/d/l/r of us, taking care about edges of map
-   utype = (y == 0           ? thisTile.type : tileAt(x, y-1).type);
-   dtype = (y == (_height-1) ? thisTile.type : tileAt(x, y+1).type);
-   ltype = (x == 0           ? thisTile.type : tileAt(x-1, y).type);
-   rtype = (x == (_width-1)  ? thisTile.type : tileAt(x+1, y).type);
+   const Tile::Type uType = tileAtClamped(x, y-1).type;
+   const Tile::Type dType = tileAtClamped(x, y+1).type;
+   const Tile::Type lType = tileAtClamped(x-1, y).type;
+   const Tile::Type rType = tileAtClamped(x+1, y).type;
 
    // Now pack all of the information into a single byte.
-   uint8_t compareMask = (((utype == thisTile.type) ? 0x8 : 0x0) |
-                          ((dtype == thisTile.type) ? 0x4 : 0x0) |
-                          ((ltype == thisTile.type) ? 0x2 : 0x0) |
-                          ((rtype == thisTile.type) ? 0x1 : 0x0));
+   uint8_t sideCompareMask = (((uType == thisType) ? 0x8 : 0x0) |
+                              ((dType == thisType) ? 0x4 : 0x0) |
+                              ((lType == thisType) ? 0x2 : 0x0) |
+                              ((rType == thisType) ? 0x1 : 0x0));
 
-   // Now translate the adjacency mask into a frame for the texture.
-   // (should I rearrange the texture to make this better?)
+   // Conveniently, for all but 1111 the mask above is the same as the frame number.
    //
-   // ...  .b.  ...  ...  ...  .b.  ...  bbb  ...  bb.  .bb  ...  ...  .bb  bb.  bbb
-   // .b.  .b.  .b.  bb.  .bb  .b.  bbb  bbb  bbb  bb.  .bb  .bb  bb.  .bb  bb.  bbb
-   // ...  ...  .b.  ...  ...  .b.  ...  ...  bbb  bb.  .bb  .bb  bb.  ...  ...  bbb
-   //  0    1    2    3    4    5    6    7    8    9    10   11  12   13   14   15
-   // 
-   // ____ u___ _d__ __l_ ___r ud__ __lr u_lr _dlr udl_ ud_r _d_r _dl_ u__r u_l_ udlr
-   // 0000 1000 0100 0010 0001 1100 0011 1011 0111 1110 1101 0101 0110 1001 1010 1111
-   //  0    8    4    2    1    C    3    B    7    E    D    5    6    9    A    F
+   // ( 0) ( 1) ( 2) ( 3) ( 4) ( 5) ( 6) ( 7) ( 8) ( 9) (10) (11) (12) (13) (14) (30)
+   //  .    .    .    .    .    .    .    .    b    b    b    b    b    b    b    b
+   // .b.  .bb  bb.  bbb  .b.  .bb  bb.  bbb  .b.  .bb  bb.  bbb  .b.  .bb  bb.  bbb
+   //  .    .    .    .    b    b    b    b    .    .    .    .    b    b    b    b
    //
-   static const uint32_t textureMap[] = { 0, 4, 3, 6, 2, 11, 12, 8, 1, 13, 14, 7, 5, 10, 9, 15 };
-   return textureMap[compareMask];
+   // ____ ___r __l_ __lr _d__ _d_r _dl_ _dlr u___ u__r u_l_ u_lr ud__ ud_r udl_ udlr 
+   // 0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111
+
+   if (sideCompareMask < 0xF)
+   {
+      return sideCompareMask;
+   }
+   else
+   {
+      // We treat the case where we have the same type u/d/l/r of us specially. When
+      // we do this we start looking at what's ul/dl/dr/ur of us, so that we can have
+      // better textures for the corners.
+
+      const Tile::Type ulType = tileAtClamped(x-1, y-1).type;
+      const Tile::Type dlType = tileAtClamped(x-1, y+1).type;
+      const Tile::Type drType = tileAtClamped(x+1, y+1).type;
+      const Tile::Type urType = tileAtClamped(x+1, y-1).type;
+
+      uint32_t cornerCompareMask = (((ulType == thisType) ? 0x8 : 0x0) |
+                                   ((dlType == thisType) ? 0x4 : 0x0) |
+                                   ((drType == thisType) ? 0x2 : 0x0) |
+                                   ((urType == thisType) ? 0x1 : 0x0));
+
+      // Now translate this into a frame number. Basically, we just add fifteen.
+      //
+      // (15) (16) (17) (18) (19) (20) (21) (22) (23) (24) (25) (26) (27) (28) (29) (30)
+      // .b.  .bb  .b.  .bb  .b.  .bb  .b.  .bb  bb.  bbb  bb.  bbb  bb.  bbb  bb.  bbb
+      // bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb  bbb
+      // .b.  .b.  .bb  .bb  bb.  bb.  bbb  bbb  .b.  .b.  .bb  .bb  bb.  bb.  bbb  bbb
+      //
+      //         u   d    du  d    d u  dd   ddu u    u  u u d  u du ud   ud u udd  uddu
+      // ____ ___r __r_ __rr _l__ _l_r _lr_ _lrr l___ l__r l_r_ l_rr ll__ ll_r llr_ llrr
+      // 0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111
+
+      return 15 + cornerCompareMask;
+   }
 }
 
 void Level::draw(SpriteBatch& spriteBatch)
@@ -162,6 +188,21 @@ void Level::draw(SpriteBatch& spriteBatch)
          }
       }
    }
+}
+
+const Tile& Level::tileAtClamped(int32_t x, int32_t y) const
+{
+   if (x < 0)
+      x = 0;
+   else if (x > static_cast<int32_t>(_width-1))
+      x = static_cast<int32_t>(_width-1);
+
+   if (y < 0)
+      y = 0;
+   else if (y > static_cast<int32_t>(_height-1))
+      y = static_cast<int32_t>(_height-1);
+
+   return tileAt(static_cast<uint32_t>(x), static_cast<uint32_t>(y));
 }
 
 } // namespace client
