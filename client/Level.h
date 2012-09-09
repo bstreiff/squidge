@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/array.hpp>
 #include <vector>
 #include <stdint.h>
 #include "client/SpriteBatch.h"
@@ -11,56 +12,65 @@ namespace client {
 class Level
 {
 public:
+   enum Layer
+   {
+      Background = 0,
+      Foreground = 1,
+      LayerCount = 2
+   };
+
    Level();
    ~Level();
 
    void resize(uint32_t width, uint32_t height);
 
-   uint32_t computeFrame(uint32_t x, uint32_t y);
-   uint32_t computeDirtFrame(uint32_t x, uint32_t y);
+   void recomputeTerrainFrame(Layer layer, uint32_t x, uint32_t y);
+   void recomputeBackgroundTerrainFrame(Layer layer, uint32_t x, uint32_t y);
 
    // get the tile at a particular x,y location. if you specify an x,y off the map,
    // bad things will happen.
-   inline const Tile& tileAt(uint32_t x, uint32_t y) const;
-   inline Tile& tileAt(uint32_t x, uint32_t y);
+   inline const Tile& tileAt(Layer layer, uint32_t x, uint32_t y) const;
+   inline Tile& tileAt(Layer layer, uint32_t x, uint32_t y);
 
    // get the tile at a particular x,y location. if you specify an x,y off the map,
    // the coordinates will be clamped to give you the tile at that edge.
-   const Tile& tileAtClamped(int32_t x, int32_t y) const;
+   const Tile& tileAtClamped(Layer layer, int32_t x, int32_t y) const;
 
    // set tile at a location
-   void setTileAt(uint32_t x, uint32_t y, Tile tile);
+   void setTileAt(Layer layer, uint32_t x, uint32_t y, const Tile& tile);
 
    // Level generators should be using this...
-   void setTileAtWithoutComputingFrame(uint32_t x, uint32_t y, Tile tile);
+   void setTileAtWithoutComputingFrame(Layer layer, uint32_t x, uint32_t y, const Tile& tile);
    void recomputeAllFrames();
 
    void draw(SpriteBatch& spriteBatch);
 
 private:
-   size_t _getOffset(uint32_t x, uint32_t y) const
-   {
-      return y*_width + x;
-   }
+   size_t _getOffset(uint32_t x, uint32_t y) const;
 
    uint32_t _width;
    uint32_t _height;
    boost::shared_ptr<Texture> _dirtTexture;
    boost::shared_ptr<Texture> _brickTexture;
+   boost::shared_ptr<Texture> _dirtWallTexture;
+   boost::shared_ptr<Texture> _brickWallTexture;
 
-   std::vector<Tile> _foreground;
-   std::vector<Tile> _background;
-
+   boost::array< std::vector<Tile>, LayerCount > _tiles;
 };
 
-inline const Tile& Level::tileAt(uint32_t x, uint32_t y) const
+inline const Tile& Level::tileAt(Level::Layer layer, uint32_t x, uint32_t y) const
 {
-   return _foreground[_getOffset(x,y)];
+   return _tiles[layer][_getOffset(x,y)];
 }
 
-inline Tile& Level::tileAt(uint32_t x, uint32_t y)
+inline Tile& Level::tileAt(Level::Layer layer, uint32_t x, uint32_t y)
 {
-   return _foreground[_getOffset(x,y)];
+   return _tiles[layer][_getOffset(x,y)];
+}
+
+inline size_t Level::_getOffset(uint32_t x, uint32_t y) const
+{
+   return y*_width + x;
 }
 
 

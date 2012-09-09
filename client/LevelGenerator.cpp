@@ -52,11 +52,11 @@ void LevelGenerator::generate(
       {
          if (smoothedHeightMap[x] < y)
          {
-            level.setTileAtWithoutComputingFrame(x, y, Tile(TileType::Dirt));
+            level.setTileAtWithoutComputingFrame(Level::Foreground, x, y, Tile(TileType::Dirt));
          }
          else
          {
-            level.setTileAtWithoutComputingFrame(x, y, Tile(TileType::Air));
+            level.setTileAtWithoutComputingFrame(Level::Foreground, x, y, Tile(TileType::Air));
          }
       }
    }
@@ -72,14 +72,22 @@ void LevelGenerator::generate(
    // top and bottom
    for (uint32_t i = boxPositionX; i <= boxPositionX + boxWidth; ++i)
    {
-      level.setTileAtWithoutComputingFrame(i, boxPositionY, TileType::Brick);
-      level.setTileAtWithoutComputingFrame(i, boxPositionY+boxHeight, TileType::Brick);
+      level.setTileAtWithoutComputingFrame(Level::Foreground, i, boxPositionY, TileType::Brick);
+      level.setTileAtWithoutComputingFrame(Level::Foreground, i, boxPositionY+boxHeight, TileType::Brick);
    }
    // left and right
    for (uint32_t i = boxPositionY; i <= boxPositionY + boxHeight; ++i)
    {
-      level.setTileAtWithoutComputingFrame(boxPositionX, i, TileType::Brick);
-      level.setTileAtWithoutComputingFrame(boxPositionX+boxWidth, i, TileType::Brick);
+      level.setTileAtWithoutComputingFrame(Level::Foreground, boxPositionX, i, TileType::Brick);
+      level.setTileAtWithoutComputingFrame(Level::Foreground, boxPositionX+boxWidth, i, TileType::Brick);
+   }
+   // background
+   for (uint32_t y = boxPositionY + 1; y <= boxPositionY + boxHeight - 1; ++y)
+   {
+      for (uint32_t x = boxPositionX + 1; x <= boxPositionX + boxWidth - 1; ++x)
+      {
+         level.setTileAtWithoutComputingFrame(Level::Background, x, y, TileType::Brick);
+      }
    }
 
    // We're done setting stuff, so prettify it all up.

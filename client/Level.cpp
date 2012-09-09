@@ -7,12 +7,12 @@ namespace client {
 
 Level::Level() :
    _width(0),
-   _height(0),
-   _foreground(),
-   _background()
+   _height(0)
 {
    _brickTexture = ResourceManager::get().getTexture("bricks.png");
    _dirtTexture = ResourceManager::get().getTexture("dirt.png");
+   _brickWallTexture = ResourceManager::get().getTexture("brick_wall.png");
+   _dirtWallTexture = ResourceManager::get().getTexture("dirt_wall.png");
 }
 
 Level::~Level()
@@ -21,24 +21,25 @@ Level::~Level()
 
 void Level::resize(uint32_t width, uint32_t height)
 {
-   _foreground.resize(width*height);
-   _background.resize(width*height);
+   for (size_t i = 0; i < LayerCount; ++i)
+   {
+      _tiles[i].resize(width*height);
+   }
+
    _width = width;
    _height = height;
 }
 
-void Level::setTileAt(uint32_t x, uint32_t y, Tile tile)
+void Level::setTileAt(Level::Layer layer, uint32_t x, uint32_t y, const Tile& tile)
 {
    // tile will be coming in without subtype... we need to compute the correct frame.
-   
-   //_getOffset(x,y);
+   setTileAtWithoutComputingFrame(layer, x, y, tile);
+   recomputeTerrainFrame(layer, x, y);
 }
 
-void Level::setTileAtWithoutComputingFrame(uint32_t x, uint32_t y, Tile tile)
-{
-   // tile will be coming in without subtype... we need to compute the correct frame.
-   
-   _foreground[_getOffset(x,y)] = tile;
+void Level::setTileAtWithoutComputingFrame(Level::Layer layer, uint32_t x, uint32_t y, const Tile& tile)
+{   
+   _tiles[layer][_getOffset(x,y)] = tile;
 }
 
 void Level::recomputeAllFrames()
@@ -49,66 +50,45 @@ void Level::recomputeAllFrames()
    {
       for (uint32_t x = 0; x < _width; ++x)
       {
-         Tile& tile = _foreground[_getOffset(x,y)];
-         uint32_t frame;
+         for (size_t layer = 0; layer < LayerCount; ++layer)
+         {
+            const Tile& tile = tileAt(static_cast<Layer>(layer), x, y);
 
-         if (tile.type == TileType::Air)
-         {
-            // do nothing.
-            continue;
+            if (tile.type == TileType::Air)
+            {
+               // do nothing.
+               continue;
+            }
+            else if (tile.type == TileType::Dirt ||
+                     tile.type == TileType::Brick)
+            {
+               if (layer == Background)
+               {
+                  recomputeBackgroundTerrainFrame(static_cast<Layer>(layer), x, y);
+               }
+               else if (layer == Foreground)
+               {
+                  recomputeTerrainFrame(static_cast<Layer>(layer), x, y);
+               }
+            }
          }
-         else if (tile.type == TileType::Dirt)
-         {
-            frame = computeDirtFrame(x, y);
-         }
-         else if (tile.type == TileType::Brick)
-         {
-            frame = computeDirtFrame(x, y);
-         }
-
-         // generate a random instance of this frame so
-         // that the level looks a little more interesting.
-         uint32_t randomInstance = rand()%4;
-         tile.framex = static_cast<uint8_t>(frame);
-         tile.framey = static_cast<uint8_t>(randomInstance);
       }
    }
 
 }
 
-uint32_t Level::computeFrame(uint32_t x, uint32_t y)
+void Level::recomputeTerrainFrame(Level::Layer layer, uint32_t x, uint32_t y)
 {
-   if (_foreground[y*_width + x].type == TileType::Dirt)
-   {
-      return computeDirtFrame(x, y);
-   }
-   return static_cast<uint32_t>(~0UL);
-}
-
-// then here we only deal with brick either adjacent to brick or adjacent to nothing.
-// there are only sixteen possibilities in that case...
-//
-// ...  .b.  ...  ...  ...  .b.  ...  bbb  ...  bb. .bb  ...  ...  .bb  bb.  bbb
-// .b.  .b.  .b.  bb.  .bb  .b.  bbb  bbb  bbb  bb. .bb  .bb  bb.  .bb  bb.  bbb
-// ...  ...  .b.  ...  ...  .b.  ...  ...  bbb  bb. .bb  .bb  bb.  ...  ...  bbb
-//
-// for overlaid dirt, there are nineteen (inverse of everything above except last, plus 4 corners)
-// ddd  d.d  ddd  ddd  ddd  d.d  ddd  ...  ddd  ..d d..  ddd  ddd  d..  ..d  ...  ...  ..d  d..
-// d.d  d.d  d.d  ..d  d..  d.d  ...  ...  ...  ..d d..  d..  ..d  d..  ..d  ...  ...  ...  ...
-// ddd  ddd  d.d  ddd  ddd  d.d  ddd  ddd  ...  ..d d..  d..  ..d  ddd  ddd  ..d  d..  ...  ...
-//
-// TODO: I actually forgot a couple cases above (T intersections and inside corners... need
-// to fix the textures up for those.)
-
-uint32_t Level::computeDirtFrame(uint32_t x, uint32_t y)
-{
-   const Tile::Type thisType = tileAt(x, y).type;
+   Tile& tile = tileAt(layer, x, y);
+   const Tile::Type thisType = tile.type;
 
    // Get the tiles that are u/d/l/r of us, taking care about edges of map
-   const Tile::Type uType = tileAtClamped(x, y-1).type;
-   const Tile::Type dType = tileAtClamped(x, y+1).type;
-   const Tile::Type lType = tileAtClamped(x-1, y).type;
-   const Tile::Type rType = tileAtClamped(x+1, y).type;
+   const Tile::Type uType = tileAtClamped(layer, x, y-1).type;
+   const Tile::Type dType = tileAtClamped(layer, x, y+1).type;
+   const Tile::Type lType = tileAtClamped(layer, x-1, y).type;
+   const Tile::Type rType = tileAtClamped(layer, x+1, y).type;
+
+   uint8_t frame;
 
    // Now pack all of the information into a single byte.
    uint8_t sideCompareMask = (((uType == thisType) ? 0x8 : 0x0) |
@@ -128,7 +108,7 @@ uint32_t Level::computeDirtFrame(uint32_t x, uint32_t y)
 
    if (sideCompareMask < 0xF)
    {
-      return sideCompareMask;
+      frame = sideCompareMask;
    }
    else
    {
@@ -136,12 +116,12 @@ uint32_t Level::computeDirtFrame(uint32_t x, uint32_t y)
       // we do this we start looking at what's ul/dl/dr/ur of us, so that we can have
       // better textures for the corners.
 
-      const Tile::Type ulType = tileAtClamped(x-1, y-1).type;
-      const Tile::Type dlType = tileAtClamped(x-1, y+1).type;
-      const Tile::Type drType = tileAtClamped(x+1, y+1).type;
-      const Tile::Type urType = tileAtClamped(x+1, y-1).type;
+      const Tile::Type ulType = tileAtClamped(layer, x-1, y-1).type;
+      const Tile::Type dlType = tileAtClamped(layer, x-1, y+1).type;
+      const Tile::Type drType = tileAtClamped(layer, x+1, y+1).type;
+      const Tile::Type urType = tileAtClamped(layer, x+1, y-1).type;
 
-      uint32_t cornerCompareMask = (((ulType == thisType) ? 0x8 : 0x0) |
+      uint8_t cornerCompareMask = (((ulType == thisType) ? 0x8 : 0x0) |
                                    ((dlType == thisType) ? 0x4 : 0x0) |
                                    ((drType == thisType) ? 0x2 : 0x0) |
                                    ((urType == thisType) ? 0x1 : 0x0));
@@ -157,22 +137,87 @@ uint32_t Level::computeDirtFrame(uint32_t x, uint32_t y)
       // ____ ___r __r_ __rr _l__ _l_r _lr_ _lrr l___ l__r l_r_ l_rr ll__ ll_r llr_ llrr
       // 0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111
 
-      return 15 + cornerCompareMask;
+      frame = 15 + cornerCompareMask;
    }
+
+   // generate a random instance of this frame so
+   // that the level looks a little more interesting.
+   boost::random::random_device rng;
+   const uint32_t randomInstance = rng()%4;
+   tile.framex = static_cast<uint8_t>(frame);
+   tile.framey = static_cast<uint8_t>(randomInstance);
 }
+
+void Level::recomputeBackgroundTerrainFrame(Level::Layer layer, uint32_t x, uint32_t y)
+{
+   Tile& tile = tileAt(layer, x, y);
+   const Tile::Type thisType = tile.type;
+
+   // Get the tiles that are u/d/l/r of us, taking care about edges of map
+   const Tile::Type uType = tileAtClamped(layer, x, y-1).type;
+   const Tile::Type dType = tileAtClamped(layer, x, y+1).type;
+   const Tile::Type lType = tileAtClamped(layer, x-1, y).type;
+   const Tile::Type rType = tileAtClamped(layer, x+1, y).type;
+
+   uint8_t frame;
+
+   // Now pack all of the information into a single byte.
+   uint8_t sideCompareMask = (((uType == thisType) ? 0x8 : 0x0) |
+                              ((dType == thisType) ? 0x4 : 0x0) |
+                              ((lType == thisType) ? 0x2 : 0x0) |
+                              ((rType == thisType) ? 0x1 : 0x0));
+
+   // ( 0) ( 1) ( 2) ( 3) ( 4) ( 5) ( 6) ( 7) ( 8) ( 9) (10) (11) (12) (13) (14) (15)
+   //  .    .    .    .    .    .    .    .    b    b    b    b    b    b    b    b
+   // .b.  .bb  bb.  bbb  .b.  .bb  bb.  bbb  .b.  .bb  bb.  bbb  .b.  .bb  bb.  bbb
+   //  .    .    .    .    b    b    b    b    .    .    .    .    b    b    b    b
+   //
+   // ____ ___r __l_ __lr _d__ _d_r _dl_ _dlr u___ u__r u_l_ u_lr ud__ ud_r udl_ udlr 
+   // 0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111
+
+   frame = sideCompareMask;
+
+   // generate a random instance of this frame so
+   // that the level looks a little more interesting.
+   boost::random::random_device rng;
+   const uint32_t randomInstance = rng()%4;
+   tile.framex = static_cast<uint8_t>(frame);
+   tile.framey = static_cast<uint8_t>(randomInstance);
+}
+
 
 void Level::draw(SpriteBatch& spriteBatch)
 {
+   // draw the background layer (walls)
    for (uint32_t y = 0; y < _height; ++y)
    {
       for (uint32_t x = 0; x < _width; ++x)
       {
-         const Tile& tile = tileAt(x, y);
-         if (tile.type == TileType::Air)
+         const Tile& tile = tileAt(Background, x, y);
+         if (tile.type == TileType::Dirt)
          {
-            // do nothing.
+            spriteBatch.draw(
+               _dirtWallTexture,
+               Rectangle(tile.framex*16, tile.framey*16, 16, 16),
+               Rectangle(x*16 - 8, y*16 - 8, 32, 32));
          }
-         else if (tile.type == TileType::Dirt)
+         else if (tile.type == TileType::Brick)
+         {
+            spriteBatch.draw(
+               _brickWallTexture,
+               Rectangle(tile.framex*16, tile.framey*16, 16, 16),
+               Rectangle(x*16 - 8, y*16 - 8, 32, 32));
+         }
+      }
+   }
+
+   // draw the foreground layer
+   for (uint32_t y = 0; y < _height; ++y)
+   {
+      for (uint32_t x = 0; x < _width; ++x)
+      {
+         const Tile& tile = tileAt(Foreground, x, y);
+         if (tile.type == TileType::Dirt)
          {
             spriteBatch.draw(
                _dirtTexture,
@@ -190,7 +235,7 @@ void Level::draw(SpriteBatch& spriteBatch)
    }
 }
 
-const Tile& Level::tileAtClamped(int32_t x, int32_t y) const
+const Tile& Level::tileAtClamped(Level::Layer layer, int32_t x, int32_t y) const
 {
    if (x < 0)
       x = 0;
@@ -202,7 +247,7 @@ const Tile& Level::tileAtClamped(int32_t x, int32_t y) const
    else if (y > static_cast<int32_t>(_height-1))
       y = static_cast<int32_t>(_height-1);
 
-   return tileAt(static_cast<uint32_t>(x), static_cast<uint32_t>(y));
+   return tileAt(layer, static_cast<uint32_t>(x), static_cast<uint32_t>(y));
 }
 
 } // namespace client

@@ -33,8 +33,10 @@ set( SQUIDGE_PUBLIC_HEADER_FILES
    )
 
 set( SQUIDGE_RESOURCES
+    "${SQUIDGE_SOURCE_DIR}/resources/brick_wall.png"
     "${SQUIDGE_SOURCE_DIR}/resources/bricks.png"
     "${SQUIDGE_SOURCE_DIR}/resources/dirt.png"
+    "${SQUIDGE_SOURCE_DIR}/resources/dirt_wall.png"
    )
 
 #=================================
