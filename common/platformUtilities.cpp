@@ -25,6 +25,7 @@ void getExecutablePath(boost::filesystem::path& path)
    // Now call to get data.
    _NSGetExecutablePath(&executablePath[0], &size);
    path = &executablePath[0];
+   path = canonical(path);
 
 #elif defined(SQUIDGE_PLATFORM_WINDOWS)
 
@@ -35,6 +36,7 @@ void getExecutablePath(boost::filesystem::path& path)
    executablePath.resize(size);
    GetModuleFileNameA(NULL, &executablePath[0], size);
    path = &executablePath[0];
+   path = canonical(path);
 
 #else
 
@@ -54,6 +56,7 @@ void getResourceDirPath(boost::filesystem::path& path)
    getExecutablePath(path);
    path = path.parent_path().parent_path();
    path /= "Resources";
+   path = canonical(path);
 
 #elif defined(SQUIDGE_PLATFORM_WINDOWS)
    // Executable location is at '.../Squidge.exe'
@@ -62,6 +65,7 @@ void getResourceDirPath(boost::filesystem::path& path)
    getExecutablePath(path);
    path = path.parent_path();
    path /= "Resources";
+   path = canonical(path);
 
 #else
 
