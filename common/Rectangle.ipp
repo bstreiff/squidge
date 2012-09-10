@@ -41,6 +41,8 @@ RectangleBase<T>& RectangleBase<T>::operator=(const RectangleBase<T>& other)
    y = other.y;
    width = other.width;
    height = other.height;
+
+   return *this;
 }
 
 template<typename T>

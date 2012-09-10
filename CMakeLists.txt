@@ -64,8 +64,18 @@ if( SQUIDGE_USE_OPENGL STREQUAL YES AND OPENGL_FOUND )
 endif()
 
 #=================================
-# Add the components
+# Add vendor components
+#=================================
+
+add_subdirectory( vendor/gtest-1.6.0 )
+
+#=================================
+# Add component tests
+#=================================
+add_subdirectory( tests )
+
+#================================
+# Add the real components
 #=================================
 add_subdirectory( client )
 #add_subdirectory( server )
-#add_subdirectory( tests )
