@@ -3,6 +3,12 @@
 namespace squidge {
 
 template<typename T>
+inline Vector2Base<T>::Vector2Base() :
+   x(),
+   y()
+{ }
+
+template<typename T>
 inline Vector2Base<T>::Vector2Base(const T& xx, const T& yy) :
    x(xx),
    y(yy)
@@ -13,6 +19,14 @@ inline Vector2Base<T>::Vector2Base(const Vector2Base<T>& other) :
    x(other.x),
    y(other.y)
 { }
+
+template<typename T>
+inline Vector2Base<T>& Vector2Base<T>::operator=(const Vector2Base<T>& other)
+{
+   x = other.x;
+   y = other.y;
+   return *this;
+}
 
 template<typename T>
 inline T Vector2Base<T>::length() const
@@ -33,13 +47,13 @@ inline Vector2Base<T> Vector2Base<T>::unit() const
 }
 
 template<typename T>
-inline Vector2Base<T> operator==(const Vector2Base<T>& a, const Vector2Base<T>& b)
+inline bool operator==(const Vector2Base<T>& a, const Vector2Base<T>& b)
 {
    return a.x == b.x && a.y == b.y;
 }
 
 template<typename T>
-inline Vector2Base<T> operator!=(const Vector2Base<T>& a, const Vector2Base<T>& b)
+inline bool operator!=(const Vector2Base<T>& a, const Vector2Base<T>& b)
 {
    return !(a == b);
 }

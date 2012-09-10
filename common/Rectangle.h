@@ -35,7 +35,7 @@ template<typename T>
 bool operator!=(const RectangleBase<T>& a, const RectangleBase<T>& b);
 
 
-typedef RectangleBase<int> Rectangle;
+typedef RectangleBase<int32_t> Rectangle;
 
 }
 

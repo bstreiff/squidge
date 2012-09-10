@@ -8,8 +8,10 @@ template<typename T>
 class Vector2Base
 {
 public:
-   Vector2Base(const T& x, const T& y);
-   Vector2Base(const Vector2Base& other);
+   inline Vector2Base();
+   inline Vector2Base(const T& x, const T& y);
+   inline Vector2Base(const Vector2Base& other);
+   inline Vector2Base& operator=(const Vector2Base& other);
 
    inline T length() const;
    inline T squaredLength() const;
@@ -21,10 +23,10 @@ public:
 };
 
 template<typename T>
-inline Vector2Base<T> operator==(const Vector2Base<T>& a, const Vector2Base<T>& b);
+inline bool operator==(const Vector2Base<T>& a, const Vector2Base<T>& b);
 
 template<typename T>
-inline Vector2Base<T> operator!=(const Vector2Base<T>& a, const Vector2Base<T>& b);
+inline bool operator!=(const Vector2Base<T>& a, const Vector2Base<T>& b);
 
 template<typename T>
 inline Vector2Base<T> operator+(const Vector2Base<T>& a, const Vector2Base<T>& b);
