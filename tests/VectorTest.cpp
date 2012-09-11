@@ -11,6 +11,7 @@ TEST(VectorTest, Equals)
    IntVector b(1, 2);
    IntVector c(1, 3);
 
+   EXPECT_TRUE(a == a);
    EXPECT_TRUE(a == b);
    EXPECT_TRUE(b == a);
    EXPECT_FALSE(a == c);
@@ -55,6 +56,15 @@ TEST(VectorTest, Assignment)
 
    EXPECT_EQ(IntVector(13, 37), b = a);
    EXPECT_EQ(IntVector(13, 37), b);
+}
+
+TEST(VectorTest, SelfAssignment)
+{
+   IntVector a(13, 37);
+   
+   a = a;
+
+   EXPECT_EQ(IntVector(13, 37), a);
 }
 
 TEST(VectorTest, Components)

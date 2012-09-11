@@ -17,40 +17,16 @@ void LevelGenerator::generate(
    uint32_t height,
    Level& level)
 {
-   level.resize(width, height);
+   Rectangle bounds(-(width / 2), -(height / 2), width, height);
+   level.resize(bounds);
 
    boost::random::random_device rng;
 
-   // For now, let's use a simple algorithm for map generation...
-   // create a height map, then average it out...
-   std::vector<double> heightMap;
-   // Make this a bit larger to make the smoothing logic easier later.
-   heightMap.resize(width + 4);
-   for (uint32_t i = 0; i < width + 4; ++i)
+   for (int32_t y = bounds.y; y < bounds.y + bounds.height; ++y)
    {
-      heightMap[i] = (static_cast<double>(rng())/rng.max()) * (static_cast<double>(height)/2);
-   }
-
-   std::vector<double> smoothedHeightMap;
-   smoothedHeightMap.resize(width);
-   // now smooth it out
-   for (uint32_t i = 0; i < width; ++i)
-   {
-      smoothedHeightMap[i] = (
-         heightMap[i] +
-         heightMap[i+1] +
-         heightMap[i+2] +
-         heightMap[i+3] +
-         heightMap[i+4]) / 5.0f;
-   }
-
-
-   // now fill in.
-   for (uint32_t y = 0; y < height; ++y)
-   {
-      for (uint32_t x = 0; x < width; ++x)
+      for (int32_t x = bounds.x; x < bounds.x + bounds.width; ++x)
       {
-         if (smoothedHeightMap[x] < y)
+         if (y > 0)
          {
             level.setTileAtWithoutComputingFrame(Level::Foreground, x, y, Tile(TileType::Dirt));
          }
@@ -61,34 +37,15 @@ void LevelGenerator::generate(
       }
    }
 
-   // Add a box made out of bricks!
-   uint32_t boxWidth     = rng()%(width/2);
-   if (boxWidth < 3) boxWidth = 3;
-   uint32_t boxHeight    = rng()%(height/2);
-   if (boxHeight < 3) boxHeight = 3;
-   uint32_t boxPositionX = rng()%(width/2);
-   uint32_t boxPositionY = rng()%(height/2);
-
-   // top and bottom
-   for (uint32_t i = boxPositionX; i <= boxPositionX + boxWidth; ++i)
-   {
-      level.setTileAtWithoutComputingFrame(Level::Foreground, i, boxPositionY, TileType::Brick);
-      level.setTileAtWithoutComputingFrame(Level::Foreground, i, boxPositionY+boxHeight, TileType::Brick);
-   }
-   // left and right
-   for (uint32_t i = boxPositionY; i <= boxPositionY + boxHeight; ++i)
-   {
-      level.setTileAtWithoutComputingFrame(Level::Foreground, boxPositionX, i, TileType::Brick);
-      level.setTileAtWithoutComputingFrame(Level::Foreground, boxPositionX+boxWidth, i, TileType::Brick);
-   }
-   // background
-   for (uint32_t y = boxPositionY + 1; y <= boxPositionY + boxHeight - 1; ++y)
-   {
-      for (uint32_t x = boxPositionX + 1; x <= boxPositionX + boxWidth - 1; ++x)
-      {
-         level.setTileAtWithoutComputingFrame(Level::Background, x, y, TileType::Brick);
-      }
-   }
+   level.setTileAtWithoutComputingFrame(Level::Foreground, 0, -2, Tile(TileType::Brick));
+   level.setTileAtWithoutComputingFrame(Level::Foreground, 0, -1, Tile(TileType::Brick));
+   level.setTileAtWithoutComputingFrame(Level::Foreground, 0,  0, Tile(TileType::Brick));
+   level.setTileAtWithoutComputingFrame(Level::Foreground, 0,  1, Tile(TileType::Brick));
+   level.setTileAtWithoutComputingFrame(Level::Foreground, 0,  2, Tile(TileType::Brick));
+   level.setTileAtWithoutComputingFrame(Level::Foreground,-2,  0, Tile(TileType::Brick));
+   level.setTileAtWithoutComputingFrame(Level::Foreground,-1,  0, Tile(TileType::Brick));
+   level.setTileAtWithoutComputingFrame(Level::Foreground, 1,  0, Tile(TileType::Brick));
+   level.setTileAtWithoutComputingFrame(Level::Foreground, 2,  0, Tile(TileType::Brick));
 
    // We're done setting stuff, so prettify it all up.
    level.recomputeAllFrames();

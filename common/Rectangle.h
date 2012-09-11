@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/Vector2.h"
+#include <iostream>
 
 namespace squidge {
 
@@ -21,6 +22,9 @@ public:
    inline T left() const;
    inline T right() const;
 
+   inline bool contains(const Vector2Base<T>& point) const;
+   inline bool contains(const T& pointx, const T& pointy) const;
+
 public:
    T x;
    T y;
@@ -33,6 +37,9 @@ bool operator==(const RectangleBase<T>& a, const RectangleBase<T>& b);
 
 template<typename T>
 bool operator!=(const RectangleBase<T>& a, const RectangleBase<T>& b);
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const RectangleBase<T>& b);
 
 
 typedef RectangleBase<int32_t> Rectangle;

@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
       // draw
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      glTranslatef(-camera.x, -camera.y, 0.0f);
+      glTranslatef(-camera.x + (window.getWidth() / 2), -camera.y + (window.getHeight() / 2), 0.0f);
 
       SpriteBatch sb;
       sb.drawBegin();
