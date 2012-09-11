@@ -106,4 +106,10 @@ inline T cross(const Vector2Base<T>& a, const Vector2Base<T>& b)
    return a.x * b.y - a.y * b.x;
 }
 
+template<typename T>
+inline std::ostream& operator<<(std::ostream& os, const Vector2Base<T>& b)
+{
+   return os << '(' << b.x << ',' << b.y << ')';
+}
+
 } // namespace squidge

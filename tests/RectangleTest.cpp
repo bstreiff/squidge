@@ -9,6 +9,7 @@ TEST(RectangleTest, Equals)
    Rectangle b(1, 2, 3, 4);
    Rectangle c(1, 3, 5, 6);
 
+   EXPECT_TRUE(a == a);
    EXPECT_TRUE(a == b);
    EXPECT_TRUE(b == a);
    EXPECT_FALSE(a == c);
@@ -55,6 +56,15 @@ TEST(RectangleTest, Assignment)
    EXPECT_EQ(Rectangle(13, 37, 42, 9), b);
 }
 
+TEST(RectangleTest, SelfAssignment)
+{
+   Rectangle a(13, 37, 42, 9);
+
+   a = a;
+
+   EXPECT_EQ(Rectangle(13, 37, 42, 9), a);
+}
+
 TEST(RectangleTest, Components)
 {
    Rectangle a(13, 37, 42, 99);
@@ -81,3 +91,22 @@ TEST(RectangleTest, Bounds)
    EXPECT_EQ(7+13, a.right());
    EXPECT_EQ(11+17, a.bottom());
 }
+
+TEST(RectangleTest, Contains)
+{
+   Rectangle a(7, 11, 4, 5);
+
+   EXPECT_TRUE(a.contains(Point(7, 11)));
+   EXPECT_TRUE(a.contains(Point(7, 12)));
+
+   // Make sure the top-left corner is present and no further.
+   EXPECT_TRUE(a.contains(Point(8, 11)));
+   EXPECT_FALSE(a.contains(Point(6, 11)));
+   EXPECT_FALSE(a.contains(Point(7, 10)));
+
+   // Make sure the bottom-right corner is present and no further.
+   EXPECT_TRUE(a.contains(Point(10, 15)));
+   EXPECT_FALSE(a.contains(Point(11, 15)));
+   EXPECT_FALSE(a.contains(Point(10, 16)));
+}
+

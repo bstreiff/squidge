@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <iostream>
 
 namespace squidge {
 
@@ -51,6 +52,9 @@ inline T dot(const Vector2Base<T>& a, const Vector2Base<T>& b);
 
 template<typename T>
 inline T cross(const Vector2Base<T>& a, const Vector2Base<T>& b);
+
+template<typename T>
+inline std::ostream& operator<<(std::ostream& os, const Vector2Base<T>& b);
 
 typedef Vector2Base<float>   Vector2f;
 typedef Vector2Base<int32_t> Point;

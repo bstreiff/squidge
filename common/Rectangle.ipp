@@ -37,6 +37,9 @@ RectangleBase<T>::RectangleBase(const RectangleBase<T>& other) :
 template<typename T>
 RectangleBase<T>& RectangleBase<T>::operator=(const RectangleBase<T>& other)
 {
+   if (this == &other)
+      return *this;
+
    x = other.x;
    y = other.y;
    width = other.width;
@@ -76,6 +79,20 @@ T RectangleBase<T>::right() const
 }
 
 template<typename T>
+bool RectangleBase<T>::contains(const Vector2Base<T>& point) const
+{
+   return (point.x >= x && point.x < (x + width)) &&
+          (point.y >= y && point.y < (y + height));
+}
+
+template<typename T>
+bool RectangleBase<T>::contains(const T& pointx, const T& pointy) const
+{
+   return (pointx >= x && pointx < (x + width)) &&
+          (pointy >= y && pointy < (y + height));
+}
+
+template<typename T>
 bool operator==(const RectangleBase<T>& a, const RectangleBase<T>& b)
 {
    return a.x == b.x && a.y == b.y &&
@@ -86,6 +103,12 @@ template<typename T>
 bool operator!=(const RectangleBase<T>& a, const RectangleBase<T>& b)
 {
    return !(a == b);
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const RectangleBase<T>& b)
+{
+   return os << "[x=" << b.x << ", y=" << b.y << ", w=" << b.width << ", h=" << b.height << "]";
 }
 
 
