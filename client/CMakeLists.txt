@@ -11,10 +11,6 @@ set( SQUIDGE_SOURCE_FILES
     "${SQUIDGE_SOURCE_DIR}/client/Stopwatch.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/Texture.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/main.cpp"
-    "${SQUIDGE_SOURCE_DIR}/common/platformUtilities.cpp"
-    "${SQUIDGE_SOURCE_DIR}/common/Point.cpp"
-    "${SQUIDGE_SOURCE_DIR}/common/Vector2.cpp"
-    "${SQUIDGE_SOURCE_DIR}/common/Rectangle.cpp"
    )
 
 set( SQUIDGE_OSX_SOURCE_FILES
@@ -123,6 +119,7 @@ add_executable(
 
 target_link_libraries(
    Squidge
+   SquidgeCommon
    ${SQUIDGE_LINK_LIBRARIES} )
 
 add_custom_target(
