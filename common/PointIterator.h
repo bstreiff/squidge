@@ -6,7 +6,7 @@
 #pragma once
 
 #include <boost/iterator/iterator_facade.hpp>
-#include "common/Vector2.h"
+#include "common/Point.h"
 #include "common/Rectangle.h"
 
 namespace squidge {

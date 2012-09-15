@@ -1,49 +1,39 @@
 #pragma once
 
-#include "common/Vector2.h"
+#include "common/Point.h"
 #include <iostream>
 
 namespace squidge {
 
-template<typename T>
-class RectangleBase
+class Rectangle
 {
 public:
-   inline RectangleBase();
-   inline RectangleBase(const T& x, const T& y, const T& w, const T& h);
-   inline RectangleBase(const Vector2Base<T>& topLeft, const Vector2Base<T>& bottomRight);
-   inline RectangleBase(const RectangleBase<T>& other);
+   Rectangle();
+   Rectangle(int32_t x, int32_t y, int32_t w, int32_t h);
+   Rectangle(const Point& topLeft, const Point& bottomRight);
+   Rectangle(const Rectangle& other);
 
-   inline RectangleBase<T>& operator=(const RectangleBase<T>& other);
+   Rectangle& operator=(const Rectangle& other);
 
-   inline Vector2Base<T> center() const;
-   inline T top() const;
-   inline T bottom() const;
-   inline T left() const;
-   inline T right() const;
+   Point center() const;
+   int32_t top() const;
+   int32_t bottom() const;
+   int32_t left() const;
+   int32_t right() const;
 
-   inline bool contains(const Vector2Base<T>& point) const;
-   inline bool contains(const T& pointx, const T& pointy) const;
+   bool contains(const Point& point) const;
+   bool contains(int32_t pointx, int32_t pointy) const;
 
 public:
-   T x;
-   T y;
-   T width;
-   T height;
+   int32_t x;
+   int32_t y;
+   int32_t width;
+   int32_t height;
 };
 
-template<typename T>
-bool operator==(const RectangleBase<T>& a, const RectangleBase<T>& b);
+bool operator==(const Rectangle& a, const Rectangle& b);
+bool operator!=(const Rectangle& a, const Rectangle& b);
 
-template<typename T>
-bool operator!=(const RectangleBase<T>& a, const RectangleBase<T>& b);
+std::ostream& operator<<(std::ostream& os, const Rectangle& b);
 
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const RectangleBase<T>& b);
-
-
-typedef RectangleBase<int32_t> Rectangle;
-
-}
-
-#include "common/Rectangle.ipp"
+} // namespace squidge

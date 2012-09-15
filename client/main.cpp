@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
    levelGenerator.generate(80, 60, level);
 
    // Camera position.
-   Vector2f camera(0.0f, 0.0f);
+   Vector2 camera(0.0f, 0.0f);
 
    bool upHeld = false;
    bool downHeld = false;
