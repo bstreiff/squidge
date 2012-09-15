@@ -6,9 +6,6 @@ set( SQUIDGETEST_SOURCE_FILES
     "${SQUIDGE_SOURCE_DIR}/tests/VectorTest.cpp"
     "${SQUIDGE_SOURCE_DIR}/tests/PointIteratorTest.cpp"
     "${SQUIDGE_SOURCE_DIR}/tests/CartographTest.cpp"
-    "${SQUIDGE_SOURCE_DIR}/common/Point.cpp"
-    "${SQUIDGE_SOURCE_DIR}/common/Vector2.cpp"
-    "${SQUIDGE_SOURCE_DIR}/common/Rectangle.cpp"
    )
 
 set( SQUIDGETEST_OSX_SOURCE_FILES
@@ -104,6 +101,7 @@ add_executable(
 
 target_link_libraries(
    SquidgeTests
+   SquidgeCommon
    gtest
    gtest_main
    ${SQUIDGETEST_LINK_LIBRARIES} )
