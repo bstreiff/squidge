@@ -3,13 +3,11 @@
 
 using namespace squidge;
 
-typedef Vector2Base<int> IntVector;
-
 TEST(VectorTest, Equals)
 {
-   IntVector a(1, 2);
-   IntVector b(1, 2);
-   IntVector c(1, 3);
+   Vector2 a(1, 2);
+   Vector2 b(1, 2);
+   Vector2 c(1, 3);
 
    EXPECT_TRUE(a == a);
    EXPECT_TRUE(a == b);
@@ -22,9 +20,9 @@ TEST(VectorTest, Equals)
 
 TEST(VectorTest, NotEquals)
 {
-   IntVector a(1, 2);
-   IntVector b(1, 2);
-   IntVector c(1, 3);
+   Vector2 a(1, 2);
+   Vector2 b(1, 2);
+   Vector2 c(1, 3);
 
    EXPECT_FALSE(a != b);
    EXPECT_FALSE(b != a);
@@ -36,40 +34,40 @@ TEST(VectorTest, NotEquals)
 
 TEST(VectorTest, DefaultCtor)
 {
-   IntVector a;
+   Vector2 a;
 
-   EXPECT_EQ(IntVector(0, 0), a);
+   EXPECT_EQ(Vector2(0, 0), a);
 }
 
 TEST(VectorTest, CopyCtor)
 {
-   IntVector a(13, 37);
-   IntVector b(a);
+   Vector2 a(13, 37);
+   Vector2 b(a);
 
-   EXPECT_EQ(IntVector(13, 37), b);
+   EXPECT_EQ(Vector2(13, 37), b);
 }
 
 TEST(VectorTest, Assignment)
 {
-   IntVector a(13, 37);
-   IntVector b(99, 99);
+   Vector2 a(13, 37);
+   Vector2 b(99, 99);
 
-   EXPECT_EQ(IntVector(13, 37), b = a);
-   EXPECT_EQ(IntVector(13, 37), b);
+   EXPECT_EQ(Vector2(13, 37), b = a);
+   EXPECT_EQ(Vector2(13, 37), b);
 }
 
 TEST(VectorTest, SelfAssignment)
 {
-   IntVector a(13, 37);
+   Vector2 a(13, 37);
    
    a = a;
 
-   EXPECT_EQ(IntVector(13, 37), a);
+   EXPECT_EQ(Vector2(13, 37), a);
 }
 
 TEST(VectorTest, Components)
 {
-   IntVector a(13, 37);
+   Vector2 a(13, 37);
 
    EXPECT_EQ(13, a.x);
    EXPECT_EQ(37, a.y);
@@ -77,46 +75,46 @@ TEST(VectorTest, Components)
 
 TEST(VectorTest, Addition)
 {
-   IntVector a(7, 11);
-   IntVector b(13, 19);
+   Vector2 a(7, 11);
+   Vector2 b(13, 19);
 
-   EXPECT_EQ(IntVector(7+13, 11+19), a + b);
+   EXPECT_EQ(Vector2(7+13, 11+19), a + b);
 }
 
 TEST(VectorTest, Subtraction)
 {
-   IntVector a(7, 11);
-   IntVector b(13, 19);
+   Vector2 a(7, 11);
+   Vector2 b(13, 19);
 
-   EXPECT_EQ(IntVector(7-13, 11-19), a - b);
+   EXPECT_EQ(Vector2(7-13, 11-19), a - b);
 }
 
 TEST(VectorTest, Multiplication)
 {
-   IntVector a(7, 11);
-   IntVector b(13, 19);
+   Vector2 a(7, 11);
+   Vector2 b(13, 19);
 
-   EXPECT_EQ(IntVector(7*13, 11*19), a * b);
+   EXPECT_EQ(Vector2(7*13, 11*19), a * b);
 }
 
 TEST(VectorTest, Division)
 {
-   IntVector a(100, 15);
-   IntVector b(20, 3);
+   Vector2 a(100, 15);
+   Vector2 b(20, 3);
 
-   EXPECT_EQ(IntVector(100/20, 15/3), a / b);
+   EXPECT_EQ(Vector2(100/20, 15/3), a / b);
 }
 
 TEST(VectorTest, ScalarMultiplication)
 {
-   IntVector a(7, 11);
+   Vector2 a(7, 11);
 
-   EXPECT_EQ(IntVector(7*5, 11*5), a * 5);
+   EXPECT_EQ(Vector2(7*5, 11*5), a * 5);
 }
 
 TEST(VectorTest, ScalarDivision)
 {
-   IntVector a(100, 25);
+   Vector2 a(100, 25);
 
-   EXPECT_EQ(IntVector(100/5, 25/5), a / 5);
+   EXPECT_EQ(Vector2(100/5, 25/5), a / 5);
 }

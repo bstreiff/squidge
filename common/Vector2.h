@@ -5,60 +5,45 @@
 
 namespace squidge {
 
-template<typename T>
-class Vector2Base
+class Vector2
 {
 public:
-   inline Vector2Base();
-   inline Vector2Base(const T& x, const T& y);
-   inline Vector2Base(const Vector2Base& other);
-   inline Vector2Base& operator=(const Vector2Base& other);
+   Vector2();
+   Vector2(float x, float y);
+   Vector2(const Vector2& other);
+   Vector2& operator=(const Vector2& other);
 
-   inline T length() const;
-   inline T squaredLength() const;
-   inline Vector2Base unit() const;
+   float length() const;
+   float lengthSquared() const;
+   Vector2 unit() const;
+
+   static void add(const Vector2& a, const Vector2& b, Vector2& result);
+   static void divide(const Vector2& a, float b, Vector2& result);
+   static void divide(const Vector2& a, const Vector2& b, Vector2& result);
+   static void max(const Vector2& a, const Vector2& b, Vector2& result);
+   static void min(const Vector2& a, const Vector2& b, Vector2& result);
+   static void multiply(const Vector2& a, float b, Vector2& result);
+   static void multiply(const Vector2& a, const Vector2& b, Vector2& result);
+   static void negate(const Vector2& a, Vector2& result);
+   static void subtract(const Vector2& a, const Vector2& b, Vector2& result);
+
+   static float dot(const Vector2& a, const Vector2& b);
 
 public:
-   T x;
-   T y;
+   float x;
+   float y;
 };
 
-template<typename T>
-inline bool operator==(const Vector2Base<T>& a, const Vector2Base<T>& b);
+bool operator==(const Vector2& a, const Vector2& b);
+bool operator!=(const Vector2& a, const Vector2& b);
+Vector2 operator+(const Vector2& a, const Vector2& b);
+Vector2 operator-(const Vector2& a, const Vector2& b);
+Vector2 operator*(const Vector2& a, const Vector2& b);
+Vector2 operator/(const Vector2& a, const Vector2& b);
 
-template<typename T>
-inline bool operator!=(const Vector2Base<T>& a, const Vector2Base<T>& b);
+Vector2 operator*(const Vector2& a, float b);
+Vector2 operator/(const Vector2& a, float b);
 
-template<typename T>
-inline Vector2Base<T> operator+(const Vector2Base<T>& a, const Vector2Base<T>& b);
-
-template<typename T>
-inline Vector2Base<T> operator-(const Vector2Base<T>& a, const Vector2Base<T>& b);
-
-template<typename T>
-inline Vector2Base<T> operator*(const Vector2Base<T>& a, const Vector2Base<T>& b);
-
-template<typename T>
-inline Vector2Base<T> operator/(const Vector2Base<T>& a, const Vector2Base<T>& b);
-
-template<typename T, typename S>
-inline Vector2Base<T> operator*(const Vector2Base<T>& a, S b);
-
-template<typename T, typename S>
-inline Vector2Base<T> operator/(const Vector2Base<T>& a, S b);
-
-template<typename T>
-inline T dot(const Vector2Base<T>& a, const Vector2Base<T>& b);
-
-template<typename T>
-inline T cross(const Vector2Base<T>& a, const Vector2Base<T>& b);
-
-template<typename T>
-inline std::ostream& operator<<(std::ostream& os, const Vector2Base<T>& b);
-
-typedef Vector2Base<float>   Vector2f;
-typedef Vector2Base<int32_t> Point;
+std::ostream& operator<<(std::ostream& os, const Vector2& b);
 
 } // namespace squidge
-
-#include "common/Vector2.ipp"

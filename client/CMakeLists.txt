@@ -12,6 +12,9 @@ set( SQUIDGE_SOURCE_FILES
     "${SQUIDGE_SOURCE_DIR}/client/Texture.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/main.cpp"
     "${SQUIDGE_SOURCE_DIR}/common/platformUtilities.cpp"
+    "${SQUIDGE_SOURCE_DIR}/common/Point.cpp"
+    "${SQUIDGE_SOURCE_DIR}/common/Vector2.cpp"
+    "${SQUIDGE_SOURCE_DIR}/common/Rectangle.cpp"
    )
 
 set( SQUIDGE_OSX_SOURCE_FILES
@@ -58,7 +61,7 @@ set( SQUIDGE_INTERNAL_INCLUDE_DIRECTORIES
     ${SDL_INCLUDE_DIR}
     ${SDLIMAGE_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
-    "${SQUIDGE_SOURCE_DIR}/library"
+    ${Eigen_INCLUDE_DIR}
    )
 
 #=================================
