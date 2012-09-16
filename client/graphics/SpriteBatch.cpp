@@ -54,6 +54,11 @@ void SpriteBatch::drawEnd()
 
    glClear(GL_COLOR_BUFFER_BIT);
 
+   // TODO: Combine all the SpriteWorkItems into one giant blob of
+   // vertices and texcoords per texture id.
+
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
    for (std::list<SpriteWorkItem>::const_iterator itr = _drawQueue.begin();
         itr != _drawQueue.end(); ++itr)
@@ -62,27 +67,32 @@ void SpriteBatch::drawEnd()
 
       glBindTexture(GL_TEXTURE_2D, sprite.texture->getTextureID());
 
-      // Eventually this should be replaced by glDrawArrays or something.
-      glBegin(GL_QUADS);
+      float vertices[] =
+      {
+         sprite.destRect.left(), sprite.destRect.top(),
+         sprite.destRect.left(), sprite.destRect.bottom(),
+         sprite.destRect.right(), sprite.destRect.bottom(),
+         sprite.destRect.right(), sprite.destRect.top(),
+      };
+      float texcoords[] =
+      {
+         static_cast<float>(sprite.sourceRect.left()) / sprite.texture->getWidth(),
+            static_cast<float>(sprite.sourceRect.top()) / sprite.texture->getHeight(),
+         static_cast<float>(sprite.sourceRect.left()) / sprite.texture->getWidth(),
+            static_cast<float>(sprite.sourceRect.bottom()) / sprite.texture->getHeight(),
+         static_cast<float>(sprite.sourceRect.right()) / sprite.texture->getWidth(),
+            static_cast<float>(sprite.sourceRect.bottom()) / sprite.texture->getHeight(),
+         static_cast<float>(sprite.sourceRect.right()) / sprite.texture->getWidth(),
+            static_cast<float>(sprite.sourceRect.top()) / sprite.texture->getHeight()
+      };
 
-      glTexCoord2d(static_cast<float>(sprite.sourceRect.left()) / sprite.texture->getWidth(),
-                   static_cast<float>(sprite.sourceRect.top()) / sprite.texture->getHeight());
-      glVertex2d(sprite.destRect.left(), sprite.destRect.top());
-
-      glTexCoord2d(static_cast<float>(sprite.sourceRect.left()) / sprite.texture->getWidth(),
-                   static_cast<float>(sprite.sourceRect.bottom()) / sprite.texture->getHeight());
-      glVertex2d(sprite.destRect.left(), sprite.destRect.bottom());
-
-      glTexCoord2d(static_cast<float>(sprite.sourceRect.right()) / sprite.texture->getWidth(),
-                   static_cast<float>(sprite.sourceRect.bottom()) / sprite.texture->getHeight());
-      glVertex2d(sprite.destRect.right(), sprite.destRect.bottom());
-
-      glTexCoord2d(static_cast<float>(sprite.sourceRect.right()) / sprite.texture->getWidth(),
-                   static_cast<float>(sprite.sourceRect.top()) / sprite.texture->getHeight());
-      glVertex2d(sprite.destRect.right(), sprite.destRect.top());
-
-      glEnd(); // GL_QUADS
+      glVertexPointer(2, GL_FLOAT, 0, vertices);
+      glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
+      glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
    }
+
+   glDisableClientState(GL_VERTEX_ARRAY);
+   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 
    _drawQueue.clear();
