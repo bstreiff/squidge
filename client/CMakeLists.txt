@@ -7,9 +7,10 @@ set( SQUIDGE_SOURCE_FILES
     "${SQUIDGE_SOURCE_DIR}/client/ResourceManager.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/SDL/Initializer.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/SDL/Window.cpp"
-    "${SQUIDGE_SOURCE_DIR}/client/SpriteBatch.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/Stopwatch.cpp"
-    "${SQUIDGE_SOURCE_DIR}/client/Texture.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/graphics/Shader.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/graphics/SpriteBatch.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/graphics/Texture.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/main.cpp"
    )
 

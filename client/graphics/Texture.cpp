@@ -1,4 +1,4 @@
-#include "client/Texture.h"
+#include "client/graphics/Texture.h"
 #include <stdio.h>
 #include <SDL_image.h>
 #include <SDL_opengl.h>

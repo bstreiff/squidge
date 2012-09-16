@@ -1,4 +1,4 @@
-#include "client/SpriteBatch.h"
+#include "client/graphics/SpriteBatch.h"
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <stdexcept>
