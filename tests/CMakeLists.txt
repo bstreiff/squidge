@@ -6,6 +6,7 @@ set( SQUIDGETEST_SOURCE_FILES
     "${SQUIDGE_SOURCE_DIR}/tests/VectorTest.cpp"
     "${SQUIDGE_SOURCE_DIR}/tests/PointIteratorTest.cpp"
     "${SQUIDGE_SOURCE_DIR}/tests/CartographTest.cpp"
+    "${SQUIDGE_SOURCE_DIR}/tests/AlignmentTest.cpp"
    )
 
 set( SQUIDGETEST_OSX_SOURCE_FILES

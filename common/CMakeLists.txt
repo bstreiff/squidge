@@ -3,6 +3,7 @@
 #=================================
 set( SQUIDGECOMMON_SOURCE_FILES
     "${SQUIDGE_SOURCE_DIR}/common/platformUtilities.cpp"
+    "${SQUIDGE_SOURCE_DIR}/common/Color.cpp"
     "${SQUIDGE_SOURCE_DIR}/common/Matrix.cpp"
     "${SQUIDGE_SOURCE_DIR}/common/Point.cpp"
     "${SQUIDGE_SOURCE_DIR}/common/Vector2.cpp"
