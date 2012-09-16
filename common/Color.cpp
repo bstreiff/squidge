@@ -27,20 +27,6 @@ Color::Color(uint8_t rr, uint8_t gg, uint8_t bb, uint8_t aa) :
    r(rr), g(gg), b(bb), a(aa)
 { }
 
-Color::Color(float rr, float gg, float bb) :
-   r(convertColorFloatToByte(rr)),
-   g(convertColorFloatToByte(gg)),
-   b(convertColorFloatToByte(bb)),
-   a(255)
-{ }
-
-Color::Color(float rr, float gg, float bb, float aa) :
-   r(convertColorFloatToByte(rr)),
-   g(convertColorFloatToByte(gg)),
-   b(convertColorFloatToByte(bb)),
-   a(convertColorFloatToByte(aa))
-{ }
-
 Color::Color(const Vector3& rgb) :
    r(convertColorFloatToByte(rgb.x)),
    g(convertColorFloatToByte(rgb.y)),
@@ -49,10 +35,10 @@ Color::Color(const Vector3& rgb) :
 { }
 
 Color::Color(const Vector4& rgba) :
-   r(convertColorFloatToByte(rgb.x)),
-   g(convertColorFloatToByte(rgb.y)),
-   b(convertColorFloatToByte(rgb.z)),
-   a(convertColorFloatToByte(rgb.w)),
+   r(convertColorFloatToByte(rgba.x)),
+   g(convertColorFloatToByte(rgba.y)),
+   b(convertColorFloatToByte(rgba.z)),
+   a(convertColorFloatToByte(rgba.w))
 { }
 
 Color::Color(const Color& other) :
