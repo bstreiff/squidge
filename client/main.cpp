@@ -6,11 +6,10 @@
 #include "client/Stopwatch.h"
 #include "common/Vector2.h"
 #include "common/Rectangle.h"
-#include "client/SpriteBatch.h"
-#include "client/Texture.h"
+#include "common/Matrix.h"
+#include "client/graphics/SpriteBatch.h"
 #include "client/Level.h"
 #include "client/LevelGenerator.h"
-#include "common/platformUtilities.h"
 
 namespace squidge {
 namespace client {
@@ -18,7 +17,7 @@ namespace client {
 int main(int argc, char* argv[])
 {
    SDL::Initializer sdlInit(SDL_INIT_VIDEO);
-   SDL::Window window(640, 480);
+   SDL::Window window(800, 600);
    Stopwatch stopwatch;
 
    Level level;
@@ -109,9 +108,14 @@ int main(int argc, char* argv[])
       }
 
       // draw
+      Matrix modelview;
+      Matrix::createTranslation(
+         -camera.x + (window.getWidth() / 2),
+         -camera.y + (window.getHeight() / 2),
+         0.0f,
+         modelview);
       glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      glTranslatef(-camera.x + (window.getWidth() / 2), -camera.y + (window.getHeight() / 2), 0.0f);
+      glLoadMatrixf(modelview.data());
 
       SpriteBatch sb;
       sb.drawBegin();

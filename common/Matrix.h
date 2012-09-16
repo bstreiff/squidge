@@ -23,9 +23,11 @@ public:
    const float& operator[](size_t index) const;
    float& operator[](size_t index);
 
+   const float* data() const;
+
    static const Matrix& identity();
 
-   static void createOrthographic(float width, float height, float zNearPlane, float zFarPlane, Matrix& result);
+   static void createOrthographic(float left, float right, float bottom, float top, float nearVal, float farVal, Matrix& result);
 
    static void createRotationX(float radians, Matrix& result);
    static void createRotationY(float radians, Matrix& result);

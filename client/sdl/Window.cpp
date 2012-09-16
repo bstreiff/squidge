@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include "common/Matrix.h"
 
 namespace squidge {
 namespace client {
@@ -41,13 +42,14 @@ void Window::resize(uint32_t width, uint32_t height)
    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
    glViewport(0, 0, width, height);
    glClear(GL_COLOR_BUFFER_BIT);
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
 
-   glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+   Matrix projection;
+   Matrix::createOrthographic(0.0f, width, height, 0.0f, -1.0f, 1.0, projection);
+   glMatrixMode(GL_PROJECTION);
+   glLoadMatrixf(projection.data());
 
    glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
+   glLoadMatrixf(Matrix::identity().data());
 }
 
 SDL_Surface* Window::getSurface()

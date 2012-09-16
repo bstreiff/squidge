@@ -1,6 +1,7 @@
 #include "common/Matrix.h"
 #include "common/Vector3.h"
 #include <math.h>
+#include <algorithm>
 
 namespace squidge {
 
@@ -58,14 +59,14 @@ Matrix::Matrix(const boost::array<float, 16>& data) :
    _data(data)
 { }
 
-const float& Matrix::operator()(size_t row, size_t col) const
+const float& Matrix::operator()(size_t col, size_t row) const
 {
-   return _data[row*4+col];
+   return _data[col*4+row];
 }
 
-float& Matrix::operator()(size_t row, size_t col)
+float& Matrix::operator()(size_t col, size_t row)
 {
-   return _data[row*4+col];
+   return _data[col*4+row];
 }
 
 const float& Matrix::operator[](size_t i) const
@@ -78,6 +79,10 @@ float& Matrix::operator[](size_t i)
    return _data[i];
 }
 
+const float* Matrix::data() const
+{
+   return &_data[0];
+}
 
 const Matrix& Matrix::identity()
 {
@@ -85,28 +90,30 @@ const Matrix& Matrix::identity()
 }
 
 void Matrix::createOrthographic(
-   float width,
-   float height,
-   float zNearPlane,
-   float zFarPlane,
+   float left,
+   float right,
+   float bottom,
+   float top,
+   float nearVal,
+   float farVal,
    Matrix& result)
 {
-   result._data[ 0] = 2.0f / width;
-   result._data[ 1] = 0;
-   result._data[ 2] = 0;
-   result._data[ 3] = 0;
-   result._data[ 4] = 0;
-   result._data[ 5] = 2.0f / height;
-   result._data[ 6] = 0;
-   result._data[ 7] = 0;
-   result._data[ 8] = 0;
-   result._data[ 9] = 0;
-   result._data[10] = 1.0f / (zNearPlane - zFarPlane);
-   result._data[11] = 0;
-   result._data[12] = 0;
-   result._data[13] = 0;
-   result._data[14] = zNearPlane / (zNearPlane - zFarPlane);
-   result._data[15] = 1.0f;
+   result(0,0) = 2.0f / (right - left);
+   result(0,1) = 0;
+   result(0,2) = 0;
+   result(0,3) = 0;
+   result(1,0) = 0;
+   result(1,1) = 2.0f / (top - bottom);
+   result(1,2) = 0;
+   result(1,3) = 0;
+   result(2,0) = 0;
+   result(2,1) = 0;
+   result(2,2) = -2.0f / (nearVal - farVal);
+   result(2,3) = 0;
+   result(3,0) = - (right + left) / (right - left);
+   result(3,1) = - (top + bottom) / (top - bottom);
+   result(3,2) = - (farVal + nearVal) / (farVal - nearVal);
+   result(3,3) = 1.0f;
 }
 
 void Matrix::createRotationX(
@@ -118,10 +125,10 @@ void Matrix::createRotationX(
    float c = cosf(radians);
    float s = sinf(radians);
 
-   result._data[ 5] = c;
-   result._data[ 6] = s;
-   result._data[ 9] = -s;
-   result._data[10] = c;
+   result(1,1) = c;
+   result(1,2) = s;
+   result(2,1) = -s;
+   result(2,2) = c;
 }
 
 void Matrix::createRotationY(
@@ -133,10 +140,10 @@ void Matrix::createRotationY(
    float c = cosf(radians);
    float s = sinf(radians);
 
-   result._data[ 0] = c;
-   result._data[ 2] = -s;
-   result._data[ 8] = s;
-   result._data[10] = c;
+   result(0,0) = c;
+   result(0,2) = -s;
+   result(2,0) = s;
+   result(2,2) = c;
 }
 
 void Matrix::createRotationZ(
@@ -148,10 +155,10 @@ void Matrix::createRotationZ(
    float c = cosf(radians);
    float s = sinf(radians);
 
-   result._data[ 0] = c;
-   result._data[ 1] = s;
-   result._data[ 4] = -s;
-   result._data[ 5] = c;
+   result(0,0) = c;
+   result(0,1) = s;
+   result(1,0) = -s;
+   result(1,1) = c;
 }
 
 void Matrix::createScale(
@@ -174,22 +181,22 @@ void Matrix::createScale(
    float zScale,
    Matrix& result)
 {
-   result._data[ 0] = xScale;
-   result._data[ 1] = 0;
-   result._data[ 2] = 0;
-   result._data[ 3] = 0;
-   result._data[ 4] = 0;
-   result._data[ 5] = yScale;
-   result._data[ 6] = 0;
-   result._data[ 7] = 0;
-   result._data[ 8] = 0;
-   result._data[ 9] = 0;
-   result._data[10] = zScale;
-   result._data[11] = 0;
-   result._data[12] = 0;
-   result._data[13] = 0;
-   result._data[14] = 0;
-   result._data[15] = 1;
+   result(0,0) = xScale;
+   result(0,1) = 0;
+   result(0,2) = 0;
+   result(0,3) = 0;
+   result(1,0) = 0;
+   result(1,1) = yScale;
+   result(1,2) = 0;
+   result(1,3) = 0;
+   result(2,0) = 0;
+   result(2,1) = 0;
+   result(2,2) = zScale;
+   result(2,3) = 0;
+   result(3,0) = 0;
+   result(3,1) = 0;
+   result(3,2) = 0;
+   result(3,3) = 1;
 }
 
 void Matrix::createTranslation(
@@ -205,22 +212,22 @@ void Matrix::createTranslation(
    float zPosition,
    Matrix& result)
 {
-   result._data[ 0] = 1;
-   result._data[ 1] = 0;
-   result._data[ 2] = 0;
-   result._data[ 3] = 0;
-   result._data[ 4] = 0;
-   result._data[ 5] = 1;
-   result._data[ 6] = 0;
-   result._data[ 7] = 0;
-   result._data[ 8] = 0;
-   result._data[ 9] = 0;
-   result._data[10] = 1;
-   result._data[11] = 0;
-   result._data[12] = xPosition;
-   result._data[13] = yPosition;
-   result._data[14] = zPosition;
-   result._data[15] = 1;
+   result(0,0) = 1;
+   result(0,1) = 0;
+   result(0,2) = 0;
+   result(0,3) = 0;
+   result(1,0) = 0;
+   result(1,1) = 1;
+   result(1,2) = 0;
+   result(1,3) = 0;
+   result(2,0) = 0;
+   result(2,1) = 0;
+   result(2,2) = 1;
+   result(2,3) = 0;
+   result(3,0) = xPosition;
+   result(3,1) = yPosition;
+   result(3,2) = zPosition;
+   result(3,3) = 1;
 }
 
 void Matrix::add(const Matrix& a, const Matrix& b, Matrix& result)
@@ -249,23 +256,26 @@ void Matrix::multiply(const Matrix& a, float b, Matrix& result)
 
 void Matrix::multiply(const Matrix& a, const Matrix& b, Matrix& result)
 {
-   // funroll loops?
-   result._data[ 0] = (((a._data[ 0] * b._data[ 0]) + (a._data[ 1] * b._data[ 4])) + (a._data[ 2] * b._data[ 8])) + (a._data[ 3] * b._data[12]);
-   result._data[ 1] = (((a._data[ 0] * b._data[ 1]) + (a._data[ 1] * b._data[ 5])) + (a._data[ 2] * b._data[ 9])) + (a._data[ 3] * b._data[13]);
-   result._data[ 2] = (((a._data[ 0] * b._data[ 2]) + (a._data[ 1] * b._data[ 6])) + (a._data[ 2] * b._data[10])) + (a._data[ 3] * b._data[14]);
-   result._data[ 3] = (((a._data[ 0] * b._data[ 3]) + (a._data[ 1] * b._data[ 7])) + (a._data[ 2] * b._data[11])) + (a._data[ 3] * b._data[15]);
-   result._data[ 4] = (((a._data[ 4] * b._data[ 0]) + (a._data[ 5] * b._data[ 4])) + (a._data[ 6] * b._data[ 8])) + (a._data[ 7] * b._data[12]);
-   result._data[ 5] = (((a._data[ 4] * b._data[ 1]) + (a._data[ 5] * b._data[ 5])) + (a._data[ 6] * b._data[ 9])) + (a._data[ 7] * b._data[13]);
-   result._data[ 6] = (((a._data[ 4] * b._data[ 2]) + (a._data[ 5] * b._data[ 6])) + (a._data[ 6] * b._data[10])) + (a._data[ 7] * b._data[14]);
-   result._data[ 7] = (((a._data[ 4] * b._data[ 3]) + (a._data[ 5] * b._data[ 7])) + (a._data[ 6] * b._data[11])) + (a._data[ 7] * b._data[15]);
-   result._data[ 8] = (((a._data[ 8] * b._data[ 0]) + (a._data[ 9] * b._data[ 4])) + (a._data[10] * b._data[ 8])) + (a._data[11] * b._data[12]);
-   result._data[ 9] = (((a._data[ 8] * b._data[ 1]) + (a._data[ 9] * b._data[ 5])) + (a._data[10] * b._data[ 9])) + (a._data[11] * b._data[13]);
-   result._data[10] = (((a._data[ 8] * b._data[ 2]) + (a._data[ 9] * b._data[ 6])) + (a._data[10] * b._data[10])) + (a._data[11] * b._data[14]);
-   result._data[11] = (((a._data[ 8] * b._data[ 3]) + (a._data[ 9] * b._data[ 7])) + (a._data[10] * b._data[11])) + (a._data[11] * b._data[15]);
-   result._data[12] = (((a._data[12] * b._data[ 0]) + (a._data[13] * b._data[ 4])) + (a._data[14] * b._data[ 8])) + (a._data[15] * b._data[12]);
-   result._data[13] = (((a._data[12] * b._data[ 1]) + (a._data[13] * b._data[ 5])) + (a._data[14] * b._data[ 9])) + (a._data[15] * b._data[13]);
-   result._data[14] = (((a._data[12] * b._data[ 2]) + (a._data[13] * b._data[ 6])) + (a._data[14] * b._data[10])) + (a._data[15] * b._data[14]);
-   result._data[15] = (((a._data[12] * b._data[ 3]) + (a._data[13] * b._data[ 7])) + (a._data[14] * b._data[11])) + (a._data[15] * b._data[15]);
+   // We have to use a temporary because a or b could be result.
+   Matrix tmp;
+   tmp(0,0) = (((a(0,0) * b(0,0)) + (a(0,1) * b(1,0))) + (a(0,2) * b(2,0))) + (a(0,3) * b(3,0));
+   tmp(0,1) = (((a(0,0) * b(0,1)) + (a(0,1) * b(1,1))) + (a(0,2) * b(2,1))) + (a(0,3) * b(3,1));
+   tmp(0,2) = (((a(0,0) * b(0,2)) + (a(0,1) * b(1,2))) + (a(0,2) * b(2,2))) + (a(0,3) * b(3,2));
+   tmp(0,3) = (((a(0,0) * b(0,3)) + (a(0,1) * b(1,3))) + (a(0,2) * b(2,3))) + (a(0,3) * b(3,3));
+   tmp(1,0) = (((a(1,0) * b(0,0)) + (a(1,1) * b(1,0))) + (a(1,2) * b(2,0))) + (a(1,3) * b(3,0));
+   tmp(1,1) = (((a(1,0) * b(0,1)) + (a(1,1) * b(1,1))) + (a(1,2) * b(2,1))) + (a(1,3) * b(3,1));
+   tmp(1,2) = (((a(1,0) * b(0,2)) + (a(1,1) * b(1,2))) + (a(1,2) * b(2,2))) + (a(1,3) * b(3,2));
+   tmp(1,3) = (((a(1,0) * b(0,3)) + (a(1,1) * b(1,3))) + (a(1,2) * b(2,3))) + (a(1,3) * b(3,3));
+   tmp(2,0) = (((a(2,0) * b(0,0)) + (a(2,1) * b(1,0))) + (a(2,2) * b(2,0))) + (a(2,3) * b(3,0));
+   tmp(2,1) = (((a(2,0) * b(0,1)) + (a(2,1) * b(1,1))) + (a(2,2) * b(2,1))) + (a(2,3) * b(3,1));
+   tmp(2,2) = (((a(2,0) * b(0,2)) + (a(2,1) * b(1,2))) + (a(2,2) * b(2,2))) + (a(2,3) * b(3,2));
+   tmp(2,3) = (((a(2,0) * b(0,3)) + (a(2,1) * b(1,3))) + (a(2,2) * b(2,3))) + (a(2,3) * b(3,3));
+   tmp(3,0) = (((a(3,0) * b(0,0)) + (a(3,1) * b(1,0))) + (a(3,2) * b(2,0))) + (a(3,3) * b(3,0));
+   tmp(3,1) = (((a(3,0) * b(0,1)) + (a(3,1) * b(1,1))) + (a(3,2) * b(2,1))) + (a(3,3) * b(3,1));
+   tmp(3,2) = (((a(3,0) * b(0,2)) + (a(3,1) * b(1,2))) + (a(3,2) * b(2,2))) + (a(3,3) * b(3,2));
+   tmp(3,3) = (((a(3,0) * b(0,3)) + (a(3,1) * b(1,3))) + (a(3,2) * b(2,3))) + (a(3,3) * b(3,3));
+
+   std::swap(result, tmp);
 }
 
 void Matrix::negate(Matrix& a)

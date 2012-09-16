@@ -3,7 +3,7 @@
 #include <boost/array.hpp>
 #include <vector>
 #include <stdint.h>
-#include "client/SpriteBatch.h"
+#include "client/graphics/SpriteBatch.h"
 #include "client/Tile.h"
 #include "common/Cartograph.h"
 #include "common/Rectangle.h"

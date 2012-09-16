@@ -5,7 +5,7 @@
 #include <boost/utility.hpp>
 #include <map>
 #include <string>
-#include "client/Texture.h"
+#include "client/graphics/Texture.h"
 
 namespace squidge {
 namespace client {

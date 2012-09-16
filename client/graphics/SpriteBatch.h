@@ -2,7 +2,7 @@
 
 #include <boost/utility.hpp>
 #include <boost/shared_ptr.hpp>
-#include "client/Texture.h"
+#include "client/graphics/Texture.h"
 #include "common/Vector2.h"
 #include "common/Rectangle.h"
 #include <list>
