@@ -20,6 +20,23 @@ Goals?
 ** Maybe we can just reboot the world?
 * Perhaps we should reboot the world periodically to encourage players to
   not camp?
+* Alternative idea:
+** You (and others) descend to the bottom to achieve the MacGuffin.
+** In retrieving the MacGuffin there's a Load Bearing Boss or something,
+   and by getting the MacGuffin you now have to race back up to some
+   'safe' level.
+** Aforementioned levels are locked out until the MacGuffin is redeemed.
+** After redemption, the MacGuffin is replaced, and the levels get
+   regenerated.
+
+
+Favoring lots of little maps connected to each other via
+doors/portals/gateways of some sort, as opposed to Terraria's 'one giant
+world'. Reasons:
+* Smaller levels means we don't have to deal with fragmenting the map to
+  send to clients.
+* We can regenerate smaller levels piecemeal as necessary.
+
 
 Implicit party system-- if you're near someone, then certain enchantments
 and such will apply to other players. Kinda like Toejam and Earl. XP gets
@@ -28,6 +45,10 @@ shared too.
 Levelling up... how will that work. Like Diablo, maybe? Or maybe like
 nethack where STR/DEX/INT/WIS/CHA are determined by the same?
 
+Death is permanent. Level requirements for gear will prevent the 'I died,
+time for a mad drive for my old gear' that Terraria has.
+
+Is there friendly fire? Gut feeling is 'yes' but maybe only 50% or so.
 
 
 Player Inventories
@@ -42,6 +63,10 @@ Equipment
 
 Most monsters should use the same 'skeleton' as players
 * Monsters should be able to wear armor, wield weapons
+
+Object Identification
+* Not crucial but doable... can be circumvented by other players telling you
+  what something is, but maybe that's not so bad.
 
 
 What nethack items would make sense?
@@ -77,6 +102,8 @@ What nethack items would make sense?
 *** charging seems like it may or may not be useful
 *** genocide is overkill
 *** not sure how punishment would work
+**** actually punishment becomes hilarious with an appropriate physics
+     engine...
 *** stinking cloud could work
 ** what about potions?
 *** healing/extra healing/full healing are obvious
