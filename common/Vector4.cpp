@@ -122,6 +122,14 @@ void Vector4::subtract(const Vector4& a, const Vector4& b, Vector4& result)
    result.w = a.w - b.w;
 }
 
+void Vector4::lerp(const Vector4& start, const Vector4& end, float amount, Vector4& result)
+{
+   result.x = start.x + (end.x - start.x) * amount;
+   result.y = start.y + (end.y - start.y) * amount;
+   result.z = start.z + (end.z - start.z) * amount;
+   result.w = start.w + (end.w - start.w) * amount;
+}
+
 float Vector4::dot(const Vector4& a, const Vector4& b)
 {
    return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w;

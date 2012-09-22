@@ -29,6 +29,8 @@ public:
    static void negate(const Vector3& a, Vector3& result);
    static void subtract(const Vector3& a, const Vector3& b, Vector3& result);
 
+   static void lerp(const Vector3& start, const Vector3& end, float amount, Vector3& result);
+
    static float dot(const Vector3& a, const Vector3& b);
 
 public:

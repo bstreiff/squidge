@@ -94,6 +94,12 @@ void Vector2::subtract(const Vector2& a, const Vector2& b, Vector2& result)
    result.y = a.y - b.y;
 }
 
+void Vector2::lerp(const Vector2& start, const Vector2& end, float amount, Vector2& result)
+{
+   result.x = start.x + (end.x - start.x) * amount;
+   result.y = start.y + (end.y - start.y) * amount;
+}
+
 float Vector2::dot(const Vector2& a, const Vector2& b)
 {
    return a.x*b.x + a.y*b.y;
