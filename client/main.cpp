@@ -10,6 +10,7 @@
 #include "client/graphics/SpriteBatch.h"
 #include "client/Level.h"
 #include "client/LevelGenerator.h"
+#include "client/TestEntity.h"
 
 namespace squidge {
 namespace client {
@@ -24,6 +25,12 @@ int main(int argc, char* argv[])
    LevelGenerator levelGenerator;
    // TODO: temporary level size
    levelGenerator.generate(80, 60, level);
+
+   // TODO: create some temporary entities
+   std::vector<EdictPtr> edicts;
+   edicts.push_back(EdictPtr(new TestEntity(Vector2(0, -10), 1)));
+   edicts.push_back(EdictPtr(new TestEntity(Vector2(10, -5), 2)));
+   edicts.push_back(EdictPtr(new TestEntity(Vector2(11, -5), 3)));
 
    // Camera position.
    Vector2 camera(0.0f, 0.0f);
@@ -109,6 +116,8 @@ int main(int argc, char* argv[])
 
       // draw
       Matrix modelview;
+      // TODO: Camera translation should be on the projection matrix,
+      // not the modelview one.
       Matrix::createTranslation(
          -camera.x + (window.getWidth() / 2),
          -camera.y + (window.getHeight() / 2),
@@ -121,6 +130,11 @@ int main(int argc, char* argv[])
       sb.drawBegin();
 
       level.draw(sb);
+      for (std::vector<EdictPtr>::const_iterator edictItr = edicts.begin();
+           edictItr != edicts.end(); ++edictItr)
+      {
+         (*edictItr)->draw(sb);
+      }
       
       sb.drawEnd();
    }

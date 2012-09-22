@@ -114,6 +114,13 @@ void Vector3::subtract(const Vector3& a, const Vector3& b, Vector3& result)
    result.z = a.z - b.z;
 }
 
+void Vector3::lerp(const Vector3& start, const Vector3& end, float amount, Vector3& result)
+{
+   result.x = start.x + (end.x - start.x) * amount;
+   result.y = start.y + (end.y - start.y) * amount;
+   result.z = start.z + (end.z - start.z) * amount;
+}
+
 float Vector3::dot(const Vector3& a, const Vector3& b)
 {
    return a.x*b.x + a.y*b.y + a.z*b.z;

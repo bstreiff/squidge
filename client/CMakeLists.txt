@@ -12,6 +12,10 @@ set( SQUIDGE_SOURCE_FILES
     "${SQUIDGE_SOURCE_DIR}/client/graphics/SpriteBatch.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/graphics/Texture.cpp"
     "${SQUIDGE_SOURCE_DIR}/client/main.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/Edict.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/BaseEntity.cpp"
+    "${SQUIDGE_SOURCE_DIR}/client/TestEntity.cpp"
+
    )
 
 set( SQUIDGE_OSX_SOURCE_FILES
